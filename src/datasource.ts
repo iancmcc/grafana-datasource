@@ -31,10 +31,10 @@ export default class VividCortexDatasource {
       error = {
         status: 'error',
         message:
-          'The configuration test was not successful. Pleaes check your API token and Internet access and try again.',
+          'The configuration test was not successful. Please check your API token and Internet access and try again.',
         title: 'Credentials error',
       };
-
+    
     return this.doRequest('metrics', 'GET', { limit: 1 }).then(
       response => {
         if (response.status === 200) {
@@ -199,10 +199,13 @@ export default class VividCortexDatasource {
       params: params,
       url: this.apiUrl + '/api/v2/' + endpoint,
       method: method,
-      data: body,
+      data: undefined
     };
-
-    return this.backendSrv.datasourceRequest(options);
+    if (Object.keys(body).length) {
+      options.data = body;
+    }
+    const result = this.backendSrv.datasourceRequest(options);
+    return result;
   }
 
   /**
