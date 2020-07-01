@@ -155,11 +155,13 @@ export default class VividCortexDatasource {
       params.host = filteredHosts.map(host => host.id).join(',');
 
       this.doRequest('metrics/query-series', 'POST', params, body)
-        .then(response => ({
-          metrics: response.data.data || [],
-          from: parseInt(response.headers('X-Vc-Meta-From'), 10),
-          until: parseInt(response.headers('X-Vc-Meta-Until'), 10),
-        }))
+        .then(response => {
+          return {
+            metrics: response.data.data || [],
+            from: parseInt(response.headers.get('x-vc-meta-from'), 10),
+            until: parseInt(response.headers.get('x-vc-meta-until'), 10),
+          }
+        })
         .then(response => {
           defer.resolve(this.mapQueryResponse(response.metrics, filteredHosts, response.from, response.until));
         })

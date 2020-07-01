@@ -134,11 +134,13 @@ System.register(['moment', './lib/host_filter', './lib/helpers'], function(expor
                         var filteredHosts = _this.filterHosts(hosts, target.hosts);
                         params.host = filteredHosts.map(function (host) { return host.id; }).join(',');
                         _this.doRequest('metrics/query-series', 'POST', params, body)
-                            .then(function (response) { return ({
-                            metrics: response.data.data || [],
-                            from: parseInt(response.headers('X-Vc-Meta-From'), 10),
-                            until: parseInt(response.headers('X-Vc-Meta-Until'), 10),
-                        }); })
+                            .then(function (response) {
+                            return {
+                                metrics: response.data.data || [],
+                                from: parseInt(response.headers.get('x-vc-meta-from'), 10),
+                                until: parseInt(response.headers.get('x-vc-meta-until'), 10),
+                            };
+                        })
                             .then(function (response) {
                             defer.resolve(_this.mapQueryResponse(response.metrics, filteredHosts, response.from, response.until));
                         })
